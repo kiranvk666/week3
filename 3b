@@ -1,0 +1,97 @@
+
+import 'package:flutter/material.dart';
+
+void main() => runApp(const MyNavigationApp());
+
+class MyNavigationApp extends StatelessWidget {
+  const MyNavigationApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Navigator Demo',
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomeScreen(),
+        '/Screen1': (context) => const Screen1(),
+        '/contact': (context) => const ContactScreen(),
+      },
+      onUnknownRoute: (settings) => MaterialPageRoute(
+        builder: (context) => const UnknownScreen(),
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Home'),
+        backgroundColor: Colors.teal,
+      ),
+      body: Container(
+        color: Colors.teal.shade100,
+        padding: const EdgeInsets.all(16),
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'This is the Home Screen',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              child: const Text('Go to Screen1 (push)'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const Screen1()),
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              child: const Text('Go to Contact (named route)'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/contact');
+              },
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              child: const Text('Replace with Screen1'),
+              onPressed: () {
+                // Replaces current route with /Screen1 safely
+                Navigator.pushReplacementNamed(context, '/Screen1');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Replaced with Screen 1")),
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              child: const Text('Go to Return Screen'),
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ReturnScreen()),
+                );
+                if (context.mounted && result != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Returned: $result')),
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              child: const Text('Go to Unknown Route'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/invalid');
+              },
+            ),
